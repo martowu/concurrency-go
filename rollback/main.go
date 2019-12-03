@@ -78,9 +78,36 @@ func main() {
 		wg.Wait()
 		close(targetID)
 	}()
-	for a := range targetID {
-		fmt.Println(a)
+
+	filterdItemID := make(chan string)
+	wg2 := sync.WaitGroup{}
+	for id := range targetID {
+		id := id
+		wg2.Add(1)
+		go func() {
+			defer wg2.Done()
+			fmt.Println("filter id by: ", id)
+			if id == "I001" {
+				filterdItemID <- id
+			}
+		}()
 	}
+
+	go func() {
+		wg2.Wait()
+		close(filterdItemID)
+	}()
+
+	wgUpdate := sync.WaitGroup{}
+	for id := range filterdItemID {
+		id := id
+		wgUpdate.Add(1)
+		go func() {
+			defer wgUpdate.Done()
+			fmt.Println("Update item by id: ", id)
+		}()
+	}
+	wgUpdate.Wait()
 
 	// userItems := make(map[string][]OpenlogiItem)
 	// userItems["A001"] = append(userItems["A001"], OpenlogiItem{ItemID: "I001"})
