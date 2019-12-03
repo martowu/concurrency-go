@@ -46,7 +46,7 @@ func main() {
 	}
 
 	// fmt.Println(accountItems)
-	targetID := make(chan string, 10)
+	targetID := make(chan string, 3)
 	// defer close(targetID)
 
 	wg1 := sync.WaitGroup{}
